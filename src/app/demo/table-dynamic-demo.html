@@ -1,0 +1,181 @@
+<div class="card">
+  <p-dropdown
+    [options]="groupOptions"
+    [(ngModel)]="selectedGroupOption"
+    (onChange)="onGroupOptionChange($event)"
+    placeholder="Select a grouping option"
+  ></p-dropdown>
+
+  <!-- Time grouping options -->
+  <p-dropdown
+    [options]="timeGroupOptions"
+    [(ngModel)]="selectedTimeGroupOption"
+    (onChange)="onTimeGroupOptionChange($event)"
+    placeholder="Select a time grouping option"
+  ></p-dropdown>
+  <p-table
+    #dt
+    [value]="eventData"
+    [columns]="eventCols"
+    selectionMode="multiple"
+    [(selection)]="selectedEvents"
+    [selectionPageOnly]="true"
+    [metaKeySelection]="true"
+    [paginator]="false"
+    [rows]="10"
+    [rowsPerPageOptions]="[10,25,50]"
+    [showCurrentPageReport]="true"
+    [scrollable]="true"
+    scrollHeight="500px"
+    [globalFilterFields]="sortableColumns"
+    rowGroupMode="subheader"
+    [sortField]="selectedGroupOption"
+    groupRowsBy="productName"
+    dataKey="productName"
+    expandableRowGroups="true"
+    [sortOrder]="1"
+  >
+    <ng-template pTemplate="caption">
+      <div class="p-d-flex p-ai-center">
+        <h3>Kuormat</h3>
+        <span class="p-ml-auto"></span>
+        <div class="flex">
+          <button
+            type="button"
+            pButton
+            pRipple
+            icon="pi pi-file"
+            (click)="dt.exportCSV()"
+            class="mr-2"
+            pTooltip="CSV"
+            tooltipPosition="bottom"
+          ></button>
+          <button
+            type="button"
+            pButton
+            pRipple
+            icon="pi pi-file-excel"
+            (click)="exportExcel()"
+            class="p-button-success mr-2"
+            pTooltip="XLS"
+            tooltipPosition="bottom"
+          ></button>
+          <button
+            type="button"
+            pButton
+            pRipple
+            icon="pi pi-file-pdf"
+            (click)="exportPdf()"
+            class="p-button-warning mr-2"
+            pTooltip="PDF"
+            tooltipPosition="bottom"
+          ></button>
+          <button
+            type="button"
+            pButton
+            pRipple
+            icon="pi pi-filter"
+            (click)="dt.exportCSV({ selectionOnly: true })"
+            class="p-button-info ml-auto"
+            pTooltip="CSV, Vain valitut"
+            tooltipPosition="bottom"
+          ></button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th>
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+          {{col.header}}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="groupheader" let-columns let-isExpanded="expanded">
+      <tr pRowGroupHeader>
+        <td colspan="3">
+          <button
+            type="button"
+            pButton
+            pRipple
+            [pRowToggler]="columns"
+            class="p-button-text p-button-rounded p-button-plain mr-4"
+            [icon]="isExpanded ?  
+          'pi pi-chevron-down' :  
+          'pi pi-chevron-right'"
+          ></button>
+          <span class="font-bold"> {{columns.productName}}</span>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template
+      pTemplate="rowexpansion"
+      let-rowData
+      let-columns="columns"
+      let-expanded="expanded"
+    >
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+        </td>
+        <td>{{rowData.productName}}</td>
+        <td>{{rowData.transportCompany}}</td>
+        <td>{{rowData.registerNumber}}</td>
+        <td>{{rowData.customer}}</td>
+        <td>{{rowData.state}}</td>
+        <td>{{rowData.sourceCollectionPoint.name}}</td>
+        <td>{{rowData.targetCollectionPoint.name}}</td>
+        <td>{{rowData.fetchCollectionPoint.name}}</td>
+        <td>{{rowData.eventDate| date: 'dd.MM.yyyy mm.hh'}}</td>
+        <td>{{rowData.wasteOrigin}}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div class="card">
+  <p-table
+    [columns]="cols"
+    [value]="products"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[5,10,20]"
+  >
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of columns">{{ col.header }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <tr>
+        <td *ngFor="let col of columns">{{ rowData[col.field] }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div class="card">
+  <p-table
+    [columns]="colsGroup"
+    [value]="groupedProducts"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[5,10,20]"
+  >
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of columns">{{ col.header }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <tr>
+        <td *ngFor="let col of columns">{{ rowData[col.field] }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
