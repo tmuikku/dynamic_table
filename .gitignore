@@ -1,1 +1,9 @@
 node_modules
+*.pack
+.angular/cache/16.2.1/angular-webpack/190056ea912108d6707ca65b323a7e6170ded134/index.pack.old
+.angular/cache/16.2.1/babel-webpack/0063e687a736fde3ae5c05ead762052c24ae3f3dc46c944437447a79eafde1a6.json
+
+/dist/
+*.log
+.angular
+.history

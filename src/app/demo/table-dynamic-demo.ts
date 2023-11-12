@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { GroupedProduct, Product, cargoEvent } from '../../domain/product';
 import { ProductService } from '../../service/productservice';
-import * as FileSaver from 'file-saver';
-import * as jspdf from 'jspdf';
+import jsPDF from 'jspdf';
+import autoTable, { ColumnInput } from 'jspdf-autotable'
 
 interface Column {
   field: string;
@@ -51,7 +51,7 @@ export class TableDynamicDemo {
 
   selectedGroupOption: string;
   selectedTimeGroupOption: string;
-  exportColumns: any[];
+  exportColumns: ColumnInput[];
   selectedEvents: cargoEvent[];
 
   constructor(private productService: ProductService) {}
@@ -105,10 +105,11 @@ export class TableDynamicDemo {
       { field: 'eventDate', header: 'Tapahtumapäivä', sortable: true },
       { field: 'wasteOrigin', header: 'Alkuperä', sortable: true },
     ];
-    this.exportColumns = this.eventCols.map((col) => ({
-      title: col.header,
+     this.exportColumns = this.eventCols.map((col) => ({
+      header: col.header,
       dataKey: col.field,
     }));
+
   }
   setCodeInName(product: any): any {
     product.productName = product.code.substring(0, 3);
@@ -172,13 +173,24 @@ export class TableDynamicDemo {
     });
   }
 
+  // 
   exportPdf() {
-    import('jspdf').then((jsPDF) => {
+/*     import('jspdf').then((jsPDF) => {
       import('jspdf-autotable').then((x) => {
-        const doc = new jsPDF.default(0, 0);
+        const doc = new jsPDF('p', 'mm', 'a4');
         doc.autoTable(this.exportColumns, this.eventData);
         doc.save('products.pdf');
       });
-    });
+    }); */
+    // https://raw.githack.com/MrRio/jsPDF/master/docs/index.html
+    // demos https://raw.githack.com/MrRio/jsPDF/master/index.html
+    // https://www.npmjs.com/package/jspdf-autotable/v/3.0.0
+    const doc = new jsPDF('l', 'mm', 'a4');
+    // autoTable(doc, { html: '#dt' });
+    autoTable(doc, {columns: this.exportColumns, body: this.eventData as any});
+
+    doc.save('table.pdf')
+
+
   }
 }
