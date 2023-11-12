@@ -75,8 +75,8 @@ export interface cargoEvent {
   customer?: string; // Owner of the event line
   registerNumber?: string; // register numbr of transport vehicle
   transportCompany?: string; // name of the company
-  type: cargoType; // generate values randomly over the transferIds
-  state: TransferState; // generate values randomly over the transferIds
+  type: cargoType; 
+  state: TransferState; 
   sourceCollectionPoint: ProductCollectionPoint;
   targetCollectionPoint: ProductCollectionPoint;
   fetchCollectionPoint: ProductCollectionPoint;

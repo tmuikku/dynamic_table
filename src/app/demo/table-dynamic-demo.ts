@@ -19,7 +19,7 @@ export class TableDynamicDemo {
   colsGroup!: Column[];
   cols!: Column[];
 
-  eventData: cargoEvent[] = []; // Replace this with the data generated in the previous answer
+  eventData: cargoEvent[] = []; 
   eventCols: any[];
 
   sortableColumns = [
@@ -53,6 +53,8 @@ export class TableDynamicDemo {
   selectedTimeGroupOption: string;
   exportColumns: ColumnInput[];
   selectedEvents: cargoEvent[];
+  productCountMap: Map<string, number> = new Map<string, number>();
+
 
   constructor(private productService: ProductService) {}
 
@@ -83,10 +85,14 @@ export class TableDynamicDemo {
     this.productService.getEventDataRows().then((data) => {
       console.log('getEventDataRows', data);
       this.eventData = [...data];
+      this.groupedProducts = this.groupEventsByCode(this.eventData);
+      this.productCountMap = new Map<string, number>();
+      this.countEventPerGroup(this.eventData);
     });
 
     this.eventCols = [
       { field: 'productName', header: 'Tuotteen nimi', sortable: true },
+      { field: 'producCode', header: 'Tuotekoodi', sortable: true },
       { field: 'transportCompany', header: 'Kuljetusyritys', sortable: true },
       { field: 'registerNumber', header: 'Rekisterinumero', sortable: true },
       { field: 'customer', header: 'Asiakas', sortable: true },
@@ -119,24 +125,46 @@ export class TableDynamicDemo {
     const groupedProducts: GroupedProduct[] = [];
 
     products.forEach((product) => {
-      const existingGroup = groupedProducts.find(
+      let group = groupedProducts.find(
         (group) => group.code === product.code
       );
 
-      if (existingGroup) {
-        existingGroup.products.push(product);
-        existingGroup.totalRows++;
-      } else {
-        groupedProducts.push({
-          code: product.code,
-          products: [product],
-          totalRows: 1,
-        });
-      }
+      if (!group) {
+        group = { code: product.code, products: [], totalRows: 0 };
+        groupedProducts.push(group);
+      } 
+      group.products.push(product);
+      group.totalRows++;
     });
 
     return groupedProducts;
   }
+
+  groupEventsByCode(eventData: cargoEvent[]): GroupedProduct[] {
+  
+    eventData.forEach(event => {
+      let group = this.groupedProducts.find(group => group.code === event.productCode);
+      if (!group) {
+        group = { code: event.productCode, products: [], totalRows: 0 };
+        this.groupedProducts.push(group);
+      }
+      group.products.push(event);
+      group.totalRows++;
+    });
+    return this.groupedProducts;
+  }
+
+  countEventPerGroup(eventData: cargoEvent[]) {
+    eventData.forEach(event => {
+      let count = this.productCountMap.get(event.productCode);
+      if (!count) {
+        count = 0;
+      }
+      this.productCountMap.set(event.productCode, count + 1);
+    });
+    return this.productCountMap;
+  }
+
 
   onGroupOptionChange(event: any) {
     this.selectedGroupOption = event.value;

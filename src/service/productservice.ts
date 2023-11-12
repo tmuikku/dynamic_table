@@ -18,22 +18,25 @@ export class ProductService {
     ];
 
     const products = [
-      { productName: 'Puu', categoryName: 'Poltettava', unitType: 'MASS' },
-      { productName: 'Multa', categoryName: 'Maatuva', unitType: 'MASS' },
-      { productName: 'Öljy', categoryName: 'Ongelmajäte', unitType: 'VOLUME' },
-      { productName: 'Pesukone', categoryName: 'Metalli', unitType: 'PCS' },
+      { productName: 'Puu', code: '1111', categoryName: 'Poltettava', unitType: 'MASS' },
+      { productName: 'Multa', code: '2222',categoryName: 'Maatuva', unitType: 'MASS' },
+      { productName: 'Öljy', code: '3333',categoryName: 'Ongelmajäte', unitType: 'VOLUME' },
+      { productName: 'Pesukone', code: '4444', categoryName: 'Metalli', unitType: 'PCS' },
       {
         productName: 'Paperi',
+        code: '5555',
         categoryName: 'Kierrätettävä',
         unitType: 'VOLUME',
       },
       {
         productName: 'Kotitalousjäte',
+        code: '6666',
         categoryName: 'Poltettava',
         unitType: 'VOLUME',
       },
       {
         productName: 'Maalit',
+        code: '7777',
         categoryName: 'Jatkokäsiteltävä ongelmajäte',
         unitType: 'VOLUME',
       },
@@ -61,11 +64,11 @@ export class ProductService {
       const eventsPerWeek = Math.floor(Math.random() * 100) + 1;
 
       for (let i = 0; i < eventsPerWeek; i++) {
-        const product = products[Math.floor(Math.random() * products.length)];
+        const idx = Math.floor(Math.random() * products.length);
+        const product = products[idx];
         const id = uuidv4();
         const transferId = uuidv4();
         const productId = uuidv4();
-        const productCode = uuidv4();
         const categoryId = uuidv4();
         const eventDate = new Date(
           date.getTime() + Math.floor(Math.random() * oneWeek)
@@ -80,7 +83,7 @@ export class ProductService {
           id,
           transferId,
           productId,
-          productCode,
+          productCode: product.code,
           productName: product.productName,
           batchName: null,
           categoryName: product.categoryName,

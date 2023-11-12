@@ -107,7 +107,7 @@
           'pi pi-chevron-down' :  
           'pi pi-chevron-right'"
           ></button>
-          <span class="font-bold"> {{columns.productName}}</span>
+          <span class="font-bold"> {{columns.productName}} ({{productCountMap?.get(columns.productCode)}})</span>
         </td>
       </tr>
     </ng-template>
@@ -122,6 +122,7 @@
           <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
         </td>
         <td>{{rowData.productName}}</td>
+        <td>{{rowData.productCode}}</td>
         <td>{{rowData.transportCompany}}</td>
         <td>{{rowData.registerNumber}}</td>
         <td>{{rowData.customer}}</td>
