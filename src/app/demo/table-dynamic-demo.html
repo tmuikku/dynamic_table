@@ -3,16 +3,18 @@
     [options]="groupOptions"
     [(ngModel)]="selectedGroupOption"
     (onChange)="onGroupOptionChange($event)"
-    placeholder="Select a grouping option"
+    placeholder="Valitse datalle ryhmittely"
   ></p-dropdown>
 
   <!-- Time grouping options -->
+  <!--
   <p-dropdown
     [options]="timeGroupOptions"
     [(ngModel)]="selectedTimeGroupOption"
     (onChange)="onTimeGroupOptionChange($event)"
     placeholder="Select a time grouping option"
   ></p-dropdown>
+-->
   <p-table
     #dt
     [value]="eventData"
@@ -94,8 +96,9 @@
         </th>
       </tr>
     </ng-template>
+
     <ng-template pTemplate="groupheader" let-columns let-isExpanded="expanded">
-      <tr pRowGroupHeader>
+      <tr pRowGroupHeader >
         <td colspan="3">
           <button
             type="button"
@@ -113,6 +116,8 @@
         </td>
       </tr>
     </ng-template>
+ 
+
     <ng-template
       pTemplate="rowexpansion"
       let-rowData
@@ -133,12 +138,139 @@
         <td>{{rowData.targetCollectionPoint.name}}</td>
         <td>{{rowData.fetchCollectionPoint.name}}</td>
         <td>{{rowData.eventDate| date: 'dd.MM.yyyy mm.hh'}}</td>
+        <td>{{rowData.quantity }}</td>
+        <td>{{rowData.weight | number: '1.2-2'}}</td>
         <td>{{rowData.wasteOrigin}}</td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
+<div class="card">
+  <p-dropdown
+    [options]="groupOptions"
+    [(ngModel)]="selectedGroupOption"
+    (onChange)="onGroupOptionChange($event)"
+    placeholder="Valitse datalle ryhmittely"
+  ></p-dropdown>
+
+  <!-- Time grouping options -->
+  <!--
+  <p-dropdown
+    [options]="timeGroupOptions"
+    [(ngModel)]="selectedTimeGroupOption"
+    (onChange)="onTimeGroupOptionChange($event)"
+    placeholder="Select a time grouping option"
+  ></p-dropdown>
+  -->
+  <p-table
+    #dt
+    [value]="eventData"
+    [columns]="eventCols"
+    selectionMode="multiple"
+    [(selection)]="selectedEvents"
+    [selectionPageOnly]="true"
+    [metaKeySelection]="true"
+    [paginator]="false"
+    [rows]="10"
+    [rowsPerPageOptions]="[10,25,50]"
+    [showCurrentPageReport]="true"
+    [scrollable]="true"
+    scrollHeight="500px"
+    [globalFilterFields]="sortableColumns"
+    rowGroupMode="subheader"
+    [sortOrder]="1"
+  >
+    <ng-template pTemplate="caption">
+      <div class="p-d-flex p-ai-center">
+        <h3>Kuormat</h3>
+        <span class="p-ml-auto"></span>
+        <div class="flex">
+          <button
+            type="button"
+            pButton
+            pRipple
+            icon="pi pi-file"
+            (click)="dt.exportCSV()"
+            class="mr-2"
+            pTooltip="CSV"
+            tooltipPosition="bottom"
+          ></button>
+          <button
+            type="button"
+            pButton
+            pRipple
+            icon="pi pi-file-excel"
+            (click)="exportExcel()"
+            class="p-button-success mr-2"
+            pTooltip="XLS"
+            tooltipPosition="bottom"
+          ></button>
+          <button
+            type="button"
+            pButton
+            pRipple
+            icon="pi pi-file-pdf"
+            (click)="exportPdf()"
+            class="p-button-warning mr-2"
+            pTooltip="PDF"
+            tooltipPosition="bottom"
+          ></button>
+          <button
+            type="button"
+            pButton
+            pRipple
+            icon="pi pi-filter"
+            (click)="dt.exportCSV({ selectionOnly: true })"
+            class="p-button-info ml-auto"
+            pTooltip="CSV, Vain valitut"
+            tooltipPosition="bottom"
+          ></button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th>
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+          {{col.header}}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template
+      pTemplate="body"
+      let-rowData
+    >
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+        </td>
+        <td>{{rowData.productName}}</td>
+        <td>{{rowData.productCode}}</td>
+        <td>{{rowData.transportCompany}}</td>
+        <td>{{rowData.registerNumber}}</td>
+        <td>{{rowData.customer}}</td>
+        <td>{{rowData.state}}</td>
+        <td>{{rowData.sourceCollectionPoint.name}}</td>
+        <td>{{rowData.targetCollectionPoint.name}}</td>
+        <td>{{rowData.fetchCollectionPoint.name}}</td>
+        <td>{{rowData.eventDate| date: 'dd.MM.yyyy mm.hh'}}</td>
+        <td>{{rowData.quantity }}</td>
+        <td>{{rowData.weight | number: '1.2-2'}}</td>
+        <td>{{rowData.wasteOrigin}}</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+          Yhteensä {{eventData ? eventData.length : 0 }} kuormaa.
+      </div>
+  </ng-template>
+  </p-table>
+</div>
+<!--
 <div class="card">
   <p-table
     [columns]="cols"
@@ -182,3 +314,4 @@
     </ng-template>
   </p-table>
 </div>
+-->

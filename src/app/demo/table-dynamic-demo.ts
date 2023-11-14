@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { GroupedProduct, Product, cargoEvent } from '../../domain/product';
 import { ProductService } from '../../service/productservice';
 import jsPDF from 'jspdf';
@@ -49,7 +49,7 @@ export class TableDynamicDemo {
     { label: 'Month', value: 'month' },
   ];
 
-  selectedGroupOption: string;
+  selectedGroupOption: string = undefined;
   selectedTimeGroupOption: string;
   exportColumns: ColumnInput[];
   selectedEvents: cargoEvent[];
@@ -57,7 +57,8 @@ export class TableDynamicDemo {
   groupCountMap: Map<string, { count: number, value: any }>;
 
 
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService,
+    private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.productService.getProducts().then((data) => {
@@ -113,6 +114,8 @@ export class TableDynamicDemo {
       },
       { field: 'fetchCollectionPoint.name', header: 'Nouto', sortable: true },
       { field: 'eventDate', header: 'Tapahtumapäivä', sortable: true },
+      { field: 'quantity', header: 'Määrä' },
+      { field: 'weight', header: 'Paino (kg)' },
       { field: 'wasteOrigin', header: 'Alkuperä', sortable: true },
     ];
      this.exportColumns = this.eventCols.map((col) => ({
@@ -205,8 +208,6 @@ export class TableDynamicDemo {
   onGroupOptionChange(event: any) {
     this.selectedGroupOption = event.value;
     this.groupByselectedGroup(this.eventData);
-    console.log(this.groupCountMap);
-    //this.eventData = [...this.eventData];
   }
 
   onTimeGroupOptionChange(event) {
