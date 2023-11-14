@@ -54,6 +54,7 @@ export class TableDynamicDemo {
   exportColumns: ColumnInput[];
   selectedEvents: cargoEvent[];
   productCountMap: Map<string, number> = new Map<string, number>();
+  groupCountMap: Map<string, { count: number, value: any }>;
 
 
   constructor(private productService: ProductService) {}
@@ -87,7 +88,10 @@ export class TableDynamicDemo {
       this.eventData = [...data];
       this.groupedProducts = this.groupEventsByCode(this.eventData);
       this.productCountMap = new Map<string, number>();
+      
       this.countEventPerGroup(this.eventData);
+      this.groupByselectedGroup(this.eventData);
+      console.log(this.groupCountMap);
     });
 
     this.eventCols = [
@@ -154,6 +158,38 @@ export class TableDynamicDemo {
     return this.groupedProducts;
   }
 
+  groupByselectedGroup(eventData: cargoEvent[]){
+    this.groupCountMap = new Map<string, { count: number, value: any }>();
+    let groupedEventData: { [key: string]: cargoEvent[] } = {};
+  
+    if (this.selectedGroupOption) {
+      this.eventData.sort((a, b) => {
+        if (a[this.selectedGroupOption] < b[this.selectedGroupOption]) {
+          return -1;
+        }
+        if (a[this.selectedGroupOption] > b[this.selectedGroupOption]) {
+          return 1;
+        }
+        return 0;
+      });
+      console.log(this.selectedGroupOption)
+      this.eventData.forEach(event => {
+        let groupKey = event[this.selectedGroupOption]; // this.selectedGroupOption is the selected option from the dropdown
+        let groupData = this.groupCountMap.get(groupKey);
+        if (!groupData) {
+          groupData = { count: 0, value: groupKey };
+          this.groupCountMap.set(groupKey, groupData);
+          groupedEventData[groupKey] = [];
+        }
+        groupData.count++;
+        groupedEventData[groupKey].push(event);
+      });
+    }
+  
+    console.log(groupedEventData); // This will log the grouped eventData
+  
+  }
+
   countEventPerGroup(eventData: cargoEvent[]) {
     eventData.forEach(event => {
       let count = this.productCountMap.get(event.productCode);
@@ -168,6 +204,9 @@ export class TableDynamicDemo {
 
   onGroupOptionChange(event: any) {
     this.selectedGroupOption = event.value;
+    this.groupByselectedGroup(this.eventData);
+    console.log(this.groupCountMap);
+    //this.eventData = [...this.eventData];
   }
 
   onTimeGroupOptionChange(event) {

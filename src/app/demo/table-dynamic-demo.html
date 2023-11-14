@@ -30,8 +30,8 @@
     [globalFilterFields]="sortableColumns"
     rowGroupMode="subheader"
     [sortField]="selectedGroupOption"
-    groupRowsBy="productName"
-    dataKey="productName"
+    [groupRowsBy]="selectedGroupOption"
+    [dataKey]="selectedGroupOption"
     expandableRowGroups="true"
     [sortOrder]="1"
   >
@@ -107,7 +107,9 @@
           'pi pi-chevron-down' :  
           'pi pi-chevron-right'"
           ></button>
-          <span class="font-bold"> {{columns.productName}} ({{productCountMap?.get(columns.productCode)}})</span>
+          <span class="font-bold" *ngIf="groupCountMap.has(columns[selectedGroupOption])"> 
+            {{columns[selectedGroupOption]}}
+            ({{groupCountMap.get(columns[selectedGroupOption]).count}})</span>
         </td>
       </tr>
     </ng-template>
