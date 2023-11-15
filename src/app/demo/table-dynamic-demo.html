@@ -116,6 +116,13 @@
         </td>
       </tr>
     </ng-template>
+
+    <ng-template pTemplate="groupfooter" let-columns>
+      <tr class="p-rowgroup-footer">
+          <td colspan="4" style="text-align: right">Yhteensä kuormia {{columns[selectedGroupOption]}} ryhmässä</td>
+          <td>({{groupCountMap.get(columns[selectedGroupOption]).count}})</td>
+      </tr>
+  </ng-template>
  
 
     <ng-template
@@ -143,6 +150,11 @@
         <td>{{rowData.wasteOrigin}}</td>
       </tr>
     </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+          Yhteensä {{eventData ? eventData.length : 0 }} kuormaa.
+      </div>
+  </ng-template>
   </p-table>
 </div>
 
