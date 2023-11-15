@@ -166,15 +166,6 @@
     placeholder="Valitse datalle ryhmittely"
   ></p-dropdown>
 
-  <!-- Time grouping options -->
-  <!--
-  <p-dropdown
-    [options]="timeGroupOptions"
-    [(ngModel)]="selectedTimeGroupOption"
-    (onChange)="onTimeGroupOptionChange($event)"
-    placeholder="Select a time grouping option"
-  ></p-dropdown>
-  -->
   <p-table
     #dt
     [value]="eventData"
@@ -282,6 +273,8 @@
   </ng-template>
   </p-table>
 </div>
+
+<canvas id="myChart"></canvas>
 <!--
 <div class="card">
   <p-table

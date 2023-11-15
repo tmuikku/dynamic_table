@@ -3,6 +3,34 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ProductService {
+   products = [
+    { productName: 'Puu', code: '1111', categoryName: 'Poltettava', unitType: 'MASS', color: 'green'},
+    { productName: 'Multa', code: '2222',categoryName: 'Maatuva', unitType: 'MASS' , color: 'brown'},
+    { productName: 'Öljy', code: '3333',categoryName: 'Ongelmajäte', unitType: 'VOLUME' , color: 'black'},
+    { productName: 'Pesukone', code: '4444', categoryName: 'Metalli', unitType: 'PCS' , color: 'grey' },
+    {
+      productName: 'Paperi',
+      code: '5555',
+      categoryName: 'Kierrätettävä',
+      unitType: 'VOLUME',
+      color: 'blue'
+    },
+    {
+      productName: 'Kotitalousjäte',
+      code: '6666',
+      categoryName: 'Poltettava',
+      unitType: 'VOLUME',
+      color: 'red'
+    },
+    {
+      productName: 'Maalit',
+      code: '7777',
+      categoryName: 'Jatkokäsiteltävä ongelmajäte',
+      unitType: 'VOLUME',
+      color: 'pink'
+    },
+  ];
+
   getEventData() {
     const wasteOrigins = ['HOUSEHOLD', 'INDUSTRIAL', 'COMMERCIAL'];
     const contractNumbers = ['123456789', '987654321', '456123789'];
@@ -17,30 +45,6 @@ export class ProductService {
       { id: '5', identifier: 'E', name: 'Point E' },
     ];
 
-    const products = [
-      { productName: 'Puu', code: '1111', categoryName: 'Poltettava', unitType: 'MASS' },
-      { productName: 'Multa', code: '2222',categoryName: 'Maatuva', unitType: 'MASS' },
-      { productName: 'Öljy', code: '3333',categoryName: 'Ongelmajäte', unitType: 'VOLUME' },
-      { productName: 'Pesukone', code: '4444', categoryName: 'Metalli', unitType: 'PCS' },
-      {
-        productName: 'Paperi',
-        code: '5555',
-        categoryName: 'Kierrätettävä',
-        unitType: 'VOLUME',
-      },
-      {
-        productName: 'Kotitalousjäte',
-        code: '6666',
-        categoryName: 'Poltettava',
-        unitType: 'VOLUME',
-      },
-      {
-        productName: 'Maalit',
-        code: '7777',
-        categoryName: 'Jatkokäsiteltävä ongelmajäte',
-        unitType: 'VOLUME',
-      },
-    ];
 
     const transportCompanies = [
       'Kaukokuljetus',
@@ -50,28 +54,30 @@ export class ProductService {
       'Nysse',
     ];
 
-    const startDate = new Date(2023, 0, 1);
+    const startDate = new Date(2023, 1, 1);
     const endDate = new Date(2023, 11, 31);
     const oneWeek = 7 * 24 * 60 * 60 * 1000;
+    const oneDay = 24 * 60 * 60 * 1000;
 
     const cargoEvents = [];
 
     for (
       let date = startDate;
       date <= endDate;
-      date = new Date(date.getTime() + oneWeek)
+      date = new Date(date.getTime() + oneDay)
     ) {
       const eventsPerWeek = Math.floor(Math.random() * 100) + 1;
+      const eventsPerDay =  Math.floor(Math.random() * 10) + 1; // Change this to adjust the number of events per day
 
-      for (let i = 0; i < eventsPerWeek; i++) {
-        const idx = Math.floor(Math.random() * products.length);
-        const product = products[idx];
+      for (let i = 0; i < eventsPerDay; i++) {
+        const idx = Math.floor(Math.random() * this.products.length);
+        const product = this.products[idx];
         const id = uuidv4();
         const transferId = uuidv4();
         const productId = uuidv4();
         const categoryId = uuidv4();
         const eventDate = new Date(
-          date.getTime() + Math.floor(Math.random() * oneWeek)
+          date.getTime() + Math.floor(Math.random() * oneDay)
         );
         const transportCompany =
           transportCompanies[
@@ -1359,6 +1365,9 @@ export class ProductService {
 
   getProductsSmall() {
     return Promise.resolve(this.getProductsData().slice(0, 10));
+  }
+  public getProductGroups() {
+    return this.products;
   }
 
   getProducts() {

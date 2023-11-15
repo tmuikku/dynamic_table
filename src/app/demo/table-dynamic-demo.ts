@@ -3,6 +3,8 @@ import { GroupedProduct, Product, cargoEvent } from '../../domain/product';
 import { ProductService } from '../../service/productservice';
 import jsPDF from 'jspdf';
 import autoTable, { ColumnInput } from 'jspdf-autotable'
+import { Chart } from 'chart.js';
+import { compareAsc, format } from 'date-fns'
 
 interface Column {
   field: string;
@@ -92,7 +94,7 @@ export class TableDynamicDemo {
       
       this.countEventPerGroup(this.eventData);
       this.groupByselectedGroup(this.eventData);
-      console.log(this.groupCountMap);
+      this.createChartData();
     });
 
     this.eventCols = [
@@ -261,4 +263,89 @@ export class TableDynamicDemo {
 
 
   }
+
+  generateChart(canvasId: string, labels: string[], datasets: { label: string, data: number[], backgroundColor: string }[]) {
+    new Chart(canvasId, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {  
+            beginAtZero: true
+          },
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+
+  createChartData(){
+    // Group the events by product name
+    
+    let productGroups: { [key: string]: cargoEvent[] } = {};
+    this.eventData.forEach(event => {
+      if (!productGroups[event.productName]) {
+        productGroups[event.productName] = [];
+      }
+      productGroups[event.productName].push(event);
+    });
+
+    // Generate the labels for the x-axis (the weeks or months)
+    let labels: string[] = this.eventData.map(event => format(event.eventDate, 'ww')); // Change 'yyyy-MM' to 'IIII ww' for weekly grouping
+    // calculate quantity and weights over eventTime on x-axis for each product.
+    // x-axis shall group events by week or month
+    let data: number[] = labels.map(label => {
+      return this.eventData
+        .filter(event => format(event.eventDate, 'ww') === label)
+        .reduce((sum, event) => sum + event.quantity, 0);
+    });
+    // calculate quantity and weights over eventTime on x-axis for each product.
+    // x-axis shall group events by week or month
+    let data2: number[] = labels.map(label => {
+      return this.eventData
+        .filter(event => format(event.eventDate, 'ww') === label)
+        .reduce((sum, event) => sum + event.weight, 0);
+    });
+    // Generate the datasets for each product grouped product having weight and quantity
+    // separately, group on week and then by product.
+    // 
+    let datasets: { label: string, data: number[], backgroundColor: string }[] = [];
+    let groups = this.productService.getProductGroups();
+    for (let productName in productGroups) {
+      const group = groups.find(gr => gr.productName == productName);
+      const color = group ? group.color :"blue"; 
+      let productEvents = productGroups[productName];
+      let data: number[] = productEvents.map(event => event.quantity); // Change 'quantity' to the actual property you want to summarize
+      datasets.push({ label: productName, data: data, backgroundColor: color }); // Change 'blue' to the actual color for the product
+    }
+
+
+
+    // let data: number[] = labels.map(label => {
+    //   return this.eventData
+    //     .filter(event => format(event.eventDate, 'ww') === label)
+    //     .reduce((sum, event) => sum + event.quantity, 0);
+    // });
+
+    // Generate the datasets for each product
+    // let datasets: { label: string, data: number[], backgroundColor: string }[] = [];
+    // let groups = this.productService.getProductGroups();
+    // for (let productName in productGroups) {
+    //   const group = groups.find(gr => gr.productName == productName);
+    //   const color = group ? group.color :"blue"; 
+    //   let productEvents = productGroups[productName];
+    //   let data: number[] = productEvents.map(event => event.quantity); // Change 'quantity' to the actual property you want to summarize
+    //   datasets.push({ label: productName, data: data, backgroundColor: color }); // Change 'blue' to the actual color for the product
+    // }
+
+    // Generate the chart
+    this.generateChart('myChart', labels, datasets);
+  }
+  
 }
